@@ -1,6 +1,12 @@
 const express = require('express');
-const bcrypt = require('bcrypt');
-const PORT = process.env.PORT || 9000;
+const { StatusError } = require('./helpers/error_handling');
+const PORT = process.env.PORT || 9001;
+
+// global access in every file
+global.__root = __dirname;
+global.StatusError = StatusError;
+
+// console.log('Root Directory: ', __dirname);
 
 const app = express();
 

@@ -1,5 +1,7 @@
-const db = require('../../../../db');
-const {imageUrl} = require('../../../../helpers');
+const db = require( __root + '/db');
+const {imageUrl} = require( __root + '/helpers');
+
+// console.log('Root Directory: ', __root);
 
 module.exports = async (req, res, next) => {
 
