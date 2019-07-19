@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
             // cartData.cartId is the data received on postman, which comes from cartToken
             // did not use execute because even though client side sent data the data is decrypted
             const [cart = null] = await db.query(
-                `SELECT c.id AS cartId, c.lastInteraction, c.pid, c.createdAt, c.updatedAt, c.userId, c.statusId AS cartStatusId, ci.quantity, p.cost FROM carts AS c 
+                `SELECT c.id AS cartId, c.lastInteraction, c.pid, c.createdAt, c.updatedAt, c.userId, c.statusId AS cartStatusId, ci.quantity, p.cost, p.id AS productId FROM carts AS c 
                 JOIN cartItems AS ci ON ci.cartId = c.id 
                 JOIN products AS p ON ci.productId = p.id 
                 WHERE c.id=${cartData.cartId} AND c.deletedAt IS NULL AND ci.deletedAt is NULL`
@@ -26,7 +26,7 @@ module.exports = async (req, res, next) => {
             }
 
             // doesnt matter, pulled off first item in cart
-            const {cost, quantity, ...cartItem} = cart[0];
+            const {cost, quantity, productId, ...cartItem} = cart[0];
             // console.log('Cost from destructuring: ', cost); 
             // console.log('Cart: ', cart); 
             // console.log('Cart Item: ', cartItem); 
@@ -45,7 +45,8 @@ module.exports = async (req, res, next) => {
                     // console.log('Item in Map: ', item); 
                     return {
                         cost: item.cost,
-                        quantity: item.quantity
+                        quantity: item.quantity,
+                        id: item.productId
                     }
                 })
             };
