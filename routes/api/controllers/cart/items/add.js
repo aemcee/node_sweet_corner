@@ -12,8 +12,16 @@ module.exports = async (req, res, next) => {
         // equivalent
         // const {product_id} = req.params;
         // note const and let difference in scope this allowed us to use cartToken and jwt.encode
+
+        // for debugging of cart information
+        // console.log('Cart: ', req.cart);
+        // return res.send('Testing add to cart'); 
+
+        // getting cart from the middleware
+        let {cart} = req;
         const {product_id} = req.params;
         let {quantity = 1} = req.body;
+        // token still required during refactor because token needs to be sent back even though the middleware handles receiving the token
         let {'x-cart-token': cartToken} = req.headers;
 
         quantity = parseInt(quantity);
@@ -32,16 +40,12 @@ module.exports = async (req, res, next) => {
 
         // console.log('Request: ', req.headers);
 
-        if(cartToken){
+        if(!cart){
             // retreive cart data
             // console.log('Has cartToken: ', cartToken);
 
             // decode token
-            cartData = jwt.decode(cartToken, cartSecret);
-
-            console.log('Decoded Cart Data: ', cartData); 
             
-        }else{
             // create a new cart
             // [grab first item of statusId] destructuring
 
@@ -66,17 +70,26 @@ module.exports = async (req, res, next) => {
 
             cartToken = jwt.encode(cartData, cartSecret);
 
+            
+            // nothing from "outside world" so query?
+            const  [[newCart = null]] = await db.query(
+                `SELECT * FROM carts WHERE id=${cartData.cartId} AND deletedAt IS NULL`
+            );
+
+            if(!newCart){
+                throw new StatusError(500, 'Problem retrieving new cart data');
+            };
+
+            cart = newCart;
+            cart.items = null;
+
             // console.log('Result: ', result);
-        }
+        }else{
+            cartData = {
+                cartId: cart.cartId
+            };
+        };
 
-        // nothing from "outside world" so query?
-        const  [[cart = null]] = await db.query(
-            `SELECT * FROM carts WHERE id=${cartData.cartId} AND deletedAt IS NULL`
-        );
-
-        if(!cart){
-            throw new StatusError(422, 'Invalid Cart ID');
-        }
 
         // execute vs query
         // checking if product id is real
@@ -93,10 +106,20 @@ module.exports = async (req, res, next) => {
 
         // product id and cart id to query the cartitems table
         // before we insert into cart items but after we validated the other information
-        const [[existingItem = null]] = await db.query(
-            `SELECT id, quantity FROM cartItems 
-            WHERE cartId=${cartData.cartId} AND productId=${product.id} AND deletedAt IS NULL`
-        );
+        // const [[existingItem = null]] = await db.query(
+        //     `SELECT id, quantity FROM cartItems 
+        //     WHERE cartId=${cartData.cartId} AND productId=${product.id} AND deletedAt IS NULL`
+        // );
+
+        let existingItem = null;
+
+        if(cart.items){
+            existingItem = cart.items.find(item => item.id == product.id || null);
+        };
+
+        // console.log('cart for cart.items: ', cart); 
+        // console.log('Existing Item: ', existingItem);
+        // return res.send('Testing the existingItem');
 
         if(existingItem){
             let newQuantity = quantity + existingItem.quantity;
@@ -106,7 +129,8 @@ module.exports = async (req, res, next) => {
             };
 
             // execute is safer protects against sql injection
-            const [updatedItem] = await db.query(
+            // took out const since data isnt being used
+           await db.query(
                 `UPDATE cartItems SET quantity=${newQuantity},
                  updatedAt=CURRENT_TIME ${newQuantity ? '': ', deletedAt=CURRENT_TIME '} 
                  WHERE cartId=${cartData.cartId} AND productId=${product.id}`
@@ -119,7 +143,7 @@ module.exports = async (req, res, next) => {
                 throw new StatusError(422, 'Quantity must be greater than 0 for new items');
             };
 
-            const [cartItem] = await db.execute(
+            await db.execute(
                 `INSERT INTO cartItems (pid, quantity, createdAt, updatedAt, cartId, productId) 
                 VALUES (UUID(), ?, CURRENT_TIME, CURRENT_TIME, ?, ?)`,
                 [quantity, cartData.cartId, product.id]
