@@ -1,5 +1,7 @@
 const router = require('express').Router();
-const {createAccount, signIn} = require('./controllers');
+const controllers = require('./controllers');
+const createAccount = require(__root + '/middleware/create_account');
+const signIn = require(__root + '/middleware/sign_in');
 
 // console.log('routes/auth index.js, router: ', router);
 
@@ -12,9 +14,9 @@ const {createAccount, signIn} = require('./controllers');
 // });
 
 // /auth/create-account
-router.post('/create-account', createAccount);
+router.post('/create-account', createAccount, controllers.createAccount);
 
 // /auth/sign-in
-router.post('/sign-in', signIn); 
+router.post('/sign-in', signIn, controllers.signIn); 
 
 module.exports = router; 
