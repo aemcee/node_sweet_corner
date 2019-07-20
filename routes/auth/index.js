@@ -4,6 +4,7 @@ const createAccount = require(__root + '/middleware/create_account');
 const signIn = require(__root + '/middleware/sign_in');
 const withCart = require(__root + '/middleware/with_cart');
 const cartToUser = require(__root + '/middleware/cart_to_user'); 
+const withAuth = require(__root + '/middleware/with_auth');
 
 // console.log('routes/auth index.js, router: ', router);
 
@@ -20,5 +21,9 @@ router.post('/create-account', createAccount, withCart, cartToUser, controllers.
 
 // /auth/sign-in
 router.post('/sign-in', signIn, withCart, cartToUser, controllers.signIn); 
+
+// /auth/sign-in
+// dont need to send any other information than the token
+router.get('/sign-in', withAuth, controllers.signIn); 
 
 module.exports = router; 
