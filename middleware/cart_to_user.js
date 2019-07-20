@@ -11,7 +11,8 @@ module.exports = async (req, res, next) => {
         // else if no cart, go to next "thing"
 
         // check if cart userId is equal to req.user id
-        if(req.cart.userId){
+        // added req.cart because req.cart.userId is going to be null if there is no cart
+        if(req.cart && req.cart.userId){
             if(req.cart.userId !== req.user.id){
                 throw new StatusError(401, 'Unauthorized, illegal cart token'); 
             };
