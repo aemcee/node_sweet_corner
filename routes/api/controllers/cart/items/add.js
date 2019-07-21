@@ -164,7 +164,7 @@ module.exports = async (req, res, next) => {
         
 
         // destructuring. getting data from database
-        const [[total]] = await db.query(`SELECT SUM(ci.quantity) AS items, SUM(ci.quantity * p.cost) AS total FROM cartItems AS ci JOIN products AS p ON ci.productId=p.id WHERE cartId=${cartData.cartId} AND ci.deletedAt IS NULL`)
+        const [[total]] = await db.query(`SELECT SUM(ci.quantity) AS items, SUM(ci.quantity * p.cost) AS total FROM cartItems AS ci JOIN products AS p ON ci.productId=p.id WHERE cartId=${cartData.cartId} AND ci.deletedAt IS NULL`);
 
         const message = `${quantity} ${product.name} cupcake${quantity > 1 ? 's' : ''} added to cart`;
 

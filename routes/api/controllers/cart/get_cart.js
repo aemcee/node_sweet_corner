@@ -10,7 +10,7 @@ module.exports = async (req, res, next) => {
         let {cart} = req;
         let cartDataToSend = null; 
 
-        console.log('cart: ', cart);
+        // console.log('cart: ', cart);
 
         // filter if no cart
         if(cart){
@@ -73,7 +73,7 @@ module.exports = async (req, res, next) => {
                 total: total
             }
 
-            console.log('Cart Items: ', cartItems);
+            // console.log('Cart Items: ', cartItems);
         }
 
         res.send({
