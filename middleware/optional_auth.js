@@ -2,6 +2,7 @@ const jwt = require('jwt-simple');
 const db = require(__root + '/db');
 const {authSecret} = require(__root + '/config').jwt;
 
+// optional auth checks if you're logged in but doesn't block the user if not auth
 module.exports = async (req, res, next) => {
 
     try{
