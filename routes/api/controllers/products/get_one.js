@@ -21,7 +21,7 @@ module.exports = async (req, res, next) => {
             throw new StatusError(422, 'Invalid product ID');
         };
     
-        console.log('Product:', product); 
+        // console.log('Product:', product); 
     
         res.send({
             id: product.productId,

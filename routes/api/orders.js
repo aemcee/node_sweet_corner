@@ -1,0 +1,19 @@
+
+// Long hand
+// require statements are synchronous. so its like "its there" during compiling
+// const express = require('express'); 
+// take Router from express
+// const router = express.Router(); 
+
+const router = require('express').Router();
+const {newOrder} = require('./controllers/orders'); 
+const withAuth = require(__root + '/middleware/with_auth'); 
+const withCart = require(__root + '/middleware/with_cart'); 
+
+/* 
+    /api/orders Routes
+*/
+
+router.post('/', withAuth, withCart, newOrder); 
+
+module.exports = router;

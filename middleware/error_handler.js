@@ -1,8 +1,8 @@
 module.exports = (error, req, res, next) => {
-    console.log('Default error handler?');
+    // console.log('Default error handler?');
 
     if(error instanceof StatusError){
-        console.log('***It was a status error***');
+        // console.log('***It was a status error***');
         res.status(error.status).send({errors: error.messages});
     }else{
         console.log('Error: ', error);

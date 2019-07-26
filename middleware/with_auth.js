@@ -6,13 +6,16 @@ module.exports = async (req, res, next) => {
 
     const {authorization} = req.headers;
 
-    if(!authorization){
-        throw new StatusError(401, 'Not Authorized');
-    };
+    
    
     try{
         // console.log('With Auth Middleware', authSecret);
 
+
+        if(!authorization){
+            throw new StatusError(401, 'Not Authorized');
+        };
+        
         // tokendata structured this way so you dont get an internal server error when incorrect token is used
         let tokenData = null; 
 
