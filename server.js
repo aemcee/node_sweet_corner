@@ -1,6 +1,7 @@
 const express = require('express');
 const { StatusError } = require('./helpers/error_handling');
-const PORT = process.env.PORT || 9001;
+const cors = require('cors'); 
+const PORT = process.env.PORT || 9000;
 
 // global access in every file
 global.__root = __dirname;
@@ -10,6 +11,7 @@ global.StatusError = StatusError;
 
 const app = express();
 
+app.use(cors()); 
 app.use(express.urlencoded({extended: false}));
 app.use(express.json());
 

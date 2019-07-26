@@ -17,10 +17,10 @@ const withAuth = require(__root + '/middleware/with_auth');
 // });
 
 // /auth/create-account
-router.post('/create-account', createAccount, withCart, cartToUser, controllers.createAccount);
+router.post('/create-account', withCart, createAccount, cartToUser, controllers.createAccount);
 
 // /auth/sign-in
-router.post('/sign-in', signIn, withCart, cartToUser, controllers.signIn); 
+router.post('/sign-in', withCart, signIn, cartToUser, controllers.signIn); 
 
 // /auth/sign-in
 // dont need to send any other information than the token
