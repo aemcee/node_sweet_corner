@@ -50,15 +50,17 @@ module.exports = async (req, res, next) => {
         // req.cart = cart;
 
         if(cartWhere){
-            const [cart = null] = await db.query(cartQuery + cartWhere); 
+            const [[cart = null]] = await db.query(cartQuery + cartWhere); 
 
             // if(!cart){
             //     throw new StatusError(422, 'Invalid cart token');
             // };
 
+            console.log('Found CART: ', cart); 
+
             if(cart){
                 // doesnt matter, pulled off first item in cart
-                const {cost, quantity, productId, ...cartItem} = cart[0];
+                const {cost, quantity, productId, ...cartItem} = cart;
                 // console.log('Cost from destructuring: ', cost); 
                 // console.log('Cart: ', cart); 
                 // console.log('Cart Item: ', cartItem); 
